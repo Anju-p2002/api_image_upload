@@ -91,3 +91,19 @@ def display_api_data(request):
     data = response.json()
 
     return render(request, 'display.html', {'data': data})
+
+# views.py
+
+from rest_framework import generics
+from rest_framework.parsers import MultiPartParser, FormParser
+
+
+
+
+class ImageDataListCreateView(generics.ListCreateAPIView):
+
+    queryset = ImageData.objects.all()
+
+    serializer_class = ImageDataSerializer
+
+    parser_classes = [MultiPartParser, FormParser]
