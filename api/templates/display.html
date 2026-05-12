@@ -1,12 +1,3 @@
-<!-- <h1>Data from API</h1>
-<ul>
-    {% for item in api_data %}
-        <li>{{ item.name }}: {{ item.value }}</li>
-        <li>{{ item.description }}: {{ item.value }}</li>
-        <li>{{ item.image }}: {{ item.value }}</li>
-    {% endfor %}
-</ul> -->
-
 <!DOCTYPE html>
 <html lang="en">
 
@@ -16,74 +7,235 @@
     <title>REST API Data</title>
 
     <style>
-
-        body{
-            background:#f4f4f4;
-            font-family:Arial;
-            padding:40px;
+        body {
+            background: #f4f4f4;
+            font-family: Arial;
+            padding: 40px;
         }
 
-        .container{
-            width:90%;
-            margin:auto;
+        .container {
+            width: 90%;
+            margin: auto;
         }
 
-        .card-container{
-            display:grid;
-            grid-template-columns:repeat(auto-fit,minmax(300px,1fr));
-            gap:20px;
+        .card-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
         }
 
-        .card{
-            background:white;
-            border-radius:10px;
-            overflow:hidden;
-            box-shadow:0 0 10px rgba(0,0,0,0.1);
+        .card {
+            background: white;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
         }
 
-        .card img{
-            width:100%;
-            height:250px;
-            object-fit:cover;
+        .card img {
+            width: 100%;
+            height: 250px;
+            object-fit: cover;
         }
 
-        .card-body{
-            padding:20px;
+        .card-body {
+            padding: 20px;
         }
 
+        button {
+            background: red;
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background: darkred;
+        }
     </style>
 
 </head>
 
 <body>
 
-<div class="container">
+    <div class="container">
 
-    <h1>API Data Display</h1>
+        <h1>API Data Display</h1>
 
-    <div class="card-container">
+        <div class="card-container">
 
-        {% for i in data %}
+            {% for i in data %}
 
-        <div class="card">
+            <div class="card">
 
-            <img src="{{ i.image }}" alt="">
+                <img src="{{ i.image }}" alt="">
 
-            <div class="card-body">
+                <div class="card-body">
 
-                <h2>{{ i.name }}</h2>
+                    <h2>{{ i.name }}</h2>
 
-                <p>{{ i.description }}</p>
+                    <p>{{ i.description }}</p>
+
+                    <button onclick="deleteData({{ i.id }})">
+                        Delete
+                    </button>
+
+                    <button onclick="updateData({{ i.id }})">
+                        Update
+                    </button>
+                </div>
 
             </div>
 
-        </div>
+            {% endfor %}
 
-        {% endfor %}
+        </div>
 
     </div>
 
-</div>
+    <script>
+
+        function getCookie(name) {
+
+            let cookieValue = null;
+
+            if (document.cookie && document.cookie !== '') {
+
+                const cookies = document.cookie.split(';');
+
+                for (let i = 0; i < cookies.length; i++) {
+
+                    const cookie = cookies[i].trim();
+
+                    if (cookie.substring(0, name.length + 1) === (name + '=')) {
+
+                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+
+                        break;
+
+                    }
+
+                }
+
+            }
+
+            return cookieValue;
+
+        }
+
+        function deleteData(id) {
+
+            const csrftoken = getCookie('csrftoken');
+
+            fetch(`http://127.0.0.1:8000/api/images/${id}/`, {
+
+                method: 'DELETE',
+
+                headers: {
+                    'X-CSRFToken': csrftoken
+                }
+
+            })
+
+                .then(response => {
+
+                    if (response.status === 204) {
+
+                        alert("Deleted Successfully");
+
+                        location.reload();
+
+                    }
+
+                    else {
+
+                        alert("Delete Failed");
+
+                    }
+
+                })
+
+                .catch(error => console.log(error));
+
+        }
+
+    </script>
+    <script>
+
+        function getCookie(name) {
+
+            let cookieValue = null;
+
+            if (document.cookie && document.cookie !== '') {
+
+                const cookies = document.cookie.split(';');
+
+                for (let i = 0; i < cookies.length; i++) {
+
+                    const cookie = cookies[i].trim();
+
+                    if (cookie.substring(0, name.length + 1) === (name + '=')) {
+
+                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+
+                        break;
+
+                    }
+
+                }
+
+            }
+
+            return cookieValue;
+
+        }
+
+        function updateData(id) {
+
+            const csrftoken = getCookie('csrftoken');
+
+            fetch(`http://127.0.0.1:8000/api/images/${id}/`, {
+
+                method: 'PATCH',
+
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': csrftoken
+                },
+
+                // body: JSON.stringify({
+
+                //     name: "New Updated Name",
+
+                //     description: "New Updated Description"
+
+                // })
+
+            })
+
+                .then(response => {
+
+                    if (response.ok) {
+
+                        alert("Updated Successfully");
+
+                        location.reload();
+
+                    } else {
+
+                        alert("Update Failed");
+
+                    }
+
+                })
+
+                .catch(error => console.log(error));
+
+        }
+
+    </script>
+
 
 </body>
 
